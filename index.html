@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Andres & Adriana | Boda</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ffffff, #f5f0e6);
+      perspective: 1000px;
+      /* Añadido para efecto 3D */
+    }
+
+   .floral-frame {
+     position: fixed;
+  inset: 0;
+  background: url("flores-frameV4.png") no-repeat center;
+  background-size: 100% 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@media (max-width: 800px) {
+  .floral-frame {
+    background-size: cover;
+  }
+}
+
+
+    /* Botón música */
+    #playMusic {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #d4af37, #f1d27a);
+      color: #fff;
+      cursor: pointer;
+      z-index: 100;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Sobre */
+    .envelope {
+      width: 340px;
+      height: 240px;
+      position: relative;
+      cursor: pointer;
+      transform-style: preserve-3d;
+      transition: transform 0.5s;
+      z-index: 999;
+    }
+
+    .envelope-base::before,
+    .envelope-base::after {
+      content: "🌿";
+      position: absolute;
+      font-size: 40px;
+      opacity: 0.6;
+    }
+
+    .envelope-base::before {
+      top: 10px;
+      left: 10px;
+    }
+
+    .envelope-base::after {
+      bottom: 10px;
+      right: 10px;
+    }
+
+    .envelope-base {
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      border: 2px solid #d4af37;
+      border-radius: 10px;
+      position: absolute;
+      bottom: 0;
+      z-index: 1;
+      /* Por debajo de las cartas */
+    }
+
+    .flap {
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #f1e3c6, #fff);
+      clip-path: polygon(0 0, 100% 0, 50% 55%);
+      transform-origin: top;
+      transition: transform 0.8s ease;
+      z-index: 4;
+      /* Inicialmente arriba para cerrar el sobre */
+    }
+
+    .seal {
+      position: absolute;
+      top: 55%;
+      /* Alineado con la punta del clip-path del flap */
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 65px;
+      height: 65px;
+      background: radial-gradient(circle, #f1d27a 0%, #d4af37 100%);
+      border-radius: 50%;
+      z-index: 10;
+      /* DEBE ser mayor que el z-index del flap (4) */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel Decorative', serif;
+      font-weight: bold;
+      color: #7a5c1e;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      border: 2px solid #b8860b;
+      transition: all 0.6s ease;
+    }
+
+    .envelope.open .flap {
+      transform: rotateX(180deg);
+      z-index: 1;
+    }
+
+    .envelope.open .seal {
+      opacity: 0;
+      transform: translate(-50%, -100px) scale(0.5);
+      pointer-events: none;
+    }
+
+    /* Cartas */
+    .letters {
+      position: fixed;
+      /* Cambiado a fixed para centrar respecto a la pantalla */
+      top: 50%;
+      left: 50%;
+      width: 90vw;
+      max-width: 420px;
+      height: 70vh;
+      max-height: 580px;
+      /* Centrado perfecto con transform */
+      transform: translate(-50%, -50%) scale(0);
+      opacity: 0;
+      z-index: 200;
+      /* Por encima de todo */
+      pointer-events: none;
+      transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .envelope.open .letters {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      /* Se queda en el centro */
+      pointer-events: auto;
+    }
+
+    @keyframes rise {
+      from {
+        transform: translate(-50%, 0);
+        opacity: 0;
+      }
+
+      to {
+        transform: translate(-50%, -150px);
+        opacity: 1;
+      }
+    }
+
+    .letter {
+      position: absolute;
+      width: 100%;
+      height: 110%;
+      top: 0;
+      /* Ajustado para que no baile */
+      left: 0;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+      padding: 30px;
+      text-align: center;
+      display: none;
+      border: 1px solid #eee;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .letter.active {
+      display: block;
+    }
+
+    h1,
+    h2 {
+      color: #7a5c1e;
+      margin-top: 5px;
+      font-size: 25px;
+    }
+
+    .desPresentacion {
+      color: #555;
+      font-size: 1.3em;
+      margin-bottom: 50px;
+      margin-top: 20px;
+    }
+
+    p {
+      color: #555;
+      font-size: 1.3em;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+
+    .nav {
+      position: absolute;
+      bottom: 25%;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px;
+      z-index: 11;
+    }
+
+    .nav button {
+      background: linear-gradient(135deg, #d4af37, #f1d27a);
+      border: none;
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .imageInicial {
+      max-width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .anillo {
+      max-width: 50%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    .carousel img {
+      max-width: 100%;
+      width: 100%;
+      height: 240px;
+      object-fit: cover;
+    }
+
+    .carousel {
+      position: relative;
+      width: 100%;
+      height: 320px;
+      overflow: hidden;
+      margin: 15px 0;
+    }
+
+
+    .carousel-track {
+      display: flex !important;
+      gap: 16px;
+      height: 100%;
+      animation: ribbonMove 15s linear infinite;
+    }
+
+
+    .carousel-track img,
+    .carousel-track video {
+      height: 100%;
+      object-fit: contain;
+      border-radius: 14px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+    }
+
+
+    @keyframes ribbonMove {
+      from {
+       transform: translateX(0);
+      }
+
+      to {
+        transform: translateX(-250%);
+      }
+    }
+
+
+    video {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  <audio id="music" loop playsinline preload="auto">
+    <source src="musica.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="envelope" id="envelope">
+    <div class="flap"></div>
+    <div class="seal">A & A</div>
+    <div class="envelope-base"></div>
+
+    <div class="letters" id="letters">
+      <div class="letter active">
+        <h1>💍 Andres & Adriana 💍</h1>
+        <p class="desPresentacion">Con la bendición de Dios y de nuestras familias</p>
+        <p class="desPresentacion">tenemos el honor de anunciar nuestra boda</p>
+        <img class="anillo" src="anillo.jpg" alt="Anillos de boda" />
+      </div>
+
+      <div class="letter">
+        <h2>Nuestros momentos</h2>
+        <div class="carousel">
+          <div class="carousel-track">
+            <img src="imagen1.jpeg" />
+            <img src="imagen2.jpeg" />
+            <!-- <video src="video1.mp4" muted autoplay loop></video> -->
+            <img src="imagen3.jpeg" />
+            <img src="imagen4.jpeg" />
+            <img src="imagen5.jpeg" />
+          </div>
+        </div>
+        <p>Un viaje lleno de amor, risas y sueños compartidos ✨</p>
+      </div>
+
+      <div class="letter">
+        <h2>Un mensaje para ti</h2>
+        <p>El amor verdadero no se encuentra, se construye día a día.</p>
+        <img class="imageInicial" src="imagen5.png" alt="mensaje" />
+        <p>Porque juntos somos mejores, más fuertes y mucho más felices. Hoy comienza nuestro 'para siempre'.</p>
+      </div>
+
+      <div class="letter">
+        <h2>La Celebración</h2>
+        <p><strong>Fecha:</strong> 27 de Febrero</p>
+        <p><strong>Hora:</strong> 6:00 PM</p>
+        <p><strong>Lugar:</strong> Parroquia nuestra señora del sufrago</p>
+        <p><strong>Sector:</strong> Parque boston</p>
+        <a href="https://www.google.com/maps?q=6.24866023999911,-75.55784004787309"
+            target="_blank"
+            style="
+              display:inline-block;
+              margin-top:12px;
+              padding:12px 22px;
+              background:linear-gradient(135deg,#d4af37,#f1d27a);
+              color:#fff;
+              border-radius:25px;
+              text-decoration:none;
+              font-weight:600;">
+            📍 Ver ubicación
+          </a>
+        <p><strong>Celebracion:</strong> Carrera 38 número 57 -06 dalujo uno</p>
+        <p>Será un honor compartir este día contigo 🤍</p>
+      </div>
+
+      <div class="letter">
+        <h2>Confirmar Asistencia</h2>
+        <p>Tu presencia es muy importante para nosotros</p>
+        <div style="margin-top: 20px; width: 100%; ">
+          <input type="text" id="family-name" placeholder="Nombre de la familia o invitado"
+            style="width: 100%; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; font-size: 1rem; outline: none;">
+        </div>
+        <a href="javascript:void(0);" onclick="sendWhatsApp()" id="whatsapp-btn"
+          style="display:inline-block; margin-top:15px; padding:12px 20px; background:linear-gradient(135deg,#d4af37,#f1d27a); color:#fff; border-radius:25px; text-decoration:none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+          Confirmar por WhatsApp
+        </a>
+      </div>
+
+      <div class="nav">
+        <button id="prev">◀</button>
+        <button id="next">▶</button>
+      </div>
+    </div>
+  </div>
+    <div class="floral-frame"></div>
+  <script>
+    const envelope = document.getElementById('envelope');
+    const letters = document.querySelectorAll('.letter');
+    const next = document.getElementById('next');
+    const prev = document.getElementById('prev');
+    const music = document.getElementById('music');
+
+    let index = 0;
+
+    // Abrir el sobre
+    envelope.onclick = () => {
+      if (!envelope.classList.contains('open')) {
+        music.volume = 0.6;
+        music.play().catch(() => { });
+        envelope.classList.add('open');
+      }
+    };
+
+    function sendWhatsApp() {
+      const name = document.getElementById('family-name').value;
+      const phoneNumber = "573004120781"; // Pon aquí el número real, perro
+
+      if (name.trim() === "") {
+        alert("Por favor, ingresa tu nombre o el de tu familia.");
+        return;
+      }
+
+      // Creamos el mensaje personalizado
+      const message = `¡Hola! La familia/invitado: *${name}*, confirma su asistencia a la boda de Andres y Adriana. 🤵👰`;
+
+      // Codificamos el mensaje para la URL
+      const encodedMessage = encodeURIComponent(message);
+
+      // Abrimos WhatsApp
+      window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
+    }
+
+    function show(i) {
+      letters.forEach(l => l.classList.remove('active'));
+      letters[i].classList.add('active');
+    }
+
+    // Lógica del botón Siguiente / Reiniciar
+    next.onclick = (e) => {
+      e.stopPropagation(); // Evita que el clic cierre/abra el sobre accidentalmente
+      if (index < letters.length - 1) {
+        index++;
+        show(index);
+      } else {
+        // SI ES LA ÚLTIMA CARTA: Reiniciar todo
+        envelope.classList.remove('open');
+        setTimeout(() => {
+          index = 0;
+          show(index);
+        }, 800); // Esperamos a que la animación de guardado termine
+      }
+    };
+
+    prev.onclick = (e) => {
+      e.stopPropagation();
+      if (index > 0) {
+        index--;
+        show(index);
+      }
+    };
+
+    // Carrusel automático
+    const carousels = document.querySelectorAll('.carousel');
+    carousels.forEach(carousel => {
+      let cIndex = 0;
+      const items = carousel.children;
+      Array.from(items).forEach((el, i) => el.style.display = i === 0 ? 'block' : 'none');
+      setInterval(() => {
+        items[cIndex].style.display = 'none';
+        cIndex = (cIndex + 1) % items.length;
+        items[cIndex].style.display = 'block';
+      }, 3000);
+    });
+  </script>
+
+</body>
+
+</html>
