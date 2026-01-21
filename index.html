@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap" rel="stylesheet">
   <title>Andres & Adriana | Boda</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Montserrat:wght@300;400;600&display=swap');
@@ -24,20 +25,20 @@
       /* Añadido para efecto 3D */
     }
 
-   .floral-frame {
-     position: fixed;
-  inset: 0;
-  background: url("flores-frameV4.png") no-repeat center;
-  background-size: 100% 100%;
-  pointer-events: none;
-  z-index: 1;
-}
+    .floral-frame {
+      position: fixed;
+      inset: 0;
+      background: url("fondo3.png") no-repeat center;
+      background-size: 100% 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
 
-@media (max-width: 800px) {
-  .floral-frame {
-    background-size: cover;
-  }
-}
+    @media (max-width: 800px) {
+      .floral-frame {
+        background-size: cover;
+      }
+    }
 
 
     /* Botón música */
@@ -184,7 +185,7 @@
     .letter {
       position: absolute;
       width: 100%;
-      height: 110%;
+      height: clamp(120%, 100%, 110%);
       top: 0;
       /* Ajustado para que no baile */
       left: 0;
@@ -208,21 +209,27 @@
     h2 {
       color: #7a5c1e;
       margin-top: 5px;
-      font-size: 25px;
+      font-size: clamp(40px, 5vw, 28px);
+      font-family: 'Pinyon Script';
+      letter-spacing: 2px;
+      font-weight: 400;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
     }
 
     .desPresentacion {
       color: #555;
-      font-size: 1.3em;
-      margin-bottom: 50px;
+      font-size: clamp(18px, 3vw, 16px);
+      margin-bottom: 30px;
       margin-top: 20px;
+      font-family: cursive;
     }
 
     p {
       color: #555;
-      font-size: 1.3em;
+      font-size: clamp(18px, 2.8vw, 16px);
       margin-bottom: 20px;
       margin-top: 20px;
+      font-family: cursive;
     }
 
     .nav {
@@ -289,14 +296,28 @@
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
     }
 
+    .msj {
+      font-size: clamp(40px, 6vw, 36px);
+    }
+
 
     @keyframes ribbonMove {
       from {
-       transform: translateX(0);
+        transform: translateX(0);
       }
 
       to {
         transform: translateX(-250%);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .letter {
+        padding: 36px;
+      }
+
+      .carousel {
+        height: 340px;
       }
     }
 
@@ -343,7 +364,7 @@
       </div>
 
       <div class="letter">
-        <h2>Un mensaje para ti</h2>
+        <h2 class="msj">Un mensaje para ti</h2>
         <p>El amor verdadero no se encuentra, se construye día a día.</p>
         <img class="imageInicial" src="imagen5.png" alt="mensaje" />
         <p>Porque juntos somos mejores, más fuertes y mucho más felices. Hoy comienza nuestro 'para siempre'.</p>
@@ -352,12 +373,10 @@
       <div class="letter">
         <h2>La Celebración</h2>
         <p><strong>Fecha:</strong> 27 de Febrero</p>
-        <p><strong>Hora:</strong> 6:00 PM</p>
+        <p><strong>Hora:</strong> 6:30 PM</p>
         <p><strong>Lugar:</strong> Parroquia nuestra señora del sufrago</p>
         <p><strong>Sector:</strong> Parque boston</p>
-        <a href="https://www.google.com/maps?q=6.24866023999911,-75.55784004787309"
-            target="_blank"
-            style="
+        <a href="https://www.google.com/maps?q=6.24866023999911,-75.55784004787309" target="_blank" style="
               display:inline-block;
               margin-top:12px;
               padding:12px 22px;
@@ -366,8 +385,8 @@
               border-radius:25px;
               text-decoration:none;
               font-weight:600;">
-            📍 Ver ubicación
-          </a>
+          📍 Ver ubicación
+        </a>
         <p><strong>Celebracion:</strong> Carrera 38 número 57 -06 dalujo uno</p>
         <p>Será un honor compartir este día contigo 🤍</p>
       </div>
@@ -379,6 +398,10 @@
           <input type="text" id="family-name" placeholder="Nombre de la familia o invitado"
             style="width: 100%; padding: 12px; border: 1px solid #d4af37; border-radius: 10px; text-align: center; font-size: 1rem; outline: none;">
         </div>
+        <p class="gift-note">
+          Nuestro mejor regalo es tu presencia.
+          Si deseas obsequiarnos algo más, agradeceremos con cariño la tradicional <strong>lluvia de sobres</strong>.
+        </p>
         <a href="javascript:void(0);" onclick="sendWhatsApp()" id="whatsapp-btn"
           style="display:inline-block; margin-top:15px; padding:12px 20px; background:linear-gradient(135deg,#d4af37,#f1d27a); color:#fff; border-radius:25px; text-decoration:none; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
           Confirmar por WhatsApp
@@ -391,7 +414,7 @@
       </div>
     </div>
   </div>
-    <div class="floral-frame"></div>
+  <div class="floral-frame"></div>
   <script>
     const envelope = document.getElementById('envelope');
     const letters = document.querySelectorAll('.letter');
